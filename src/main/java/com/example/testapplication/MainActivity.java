@@ -1,65 +1,37 @@
 package com.example.testapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 // MainActivity sends a test message that's received in the BackgroundThread
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private static final String TAG = "testTag1";
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initUi();
-
-        BackgroundThread bgThread = new BackgroundThread();
-        bgThread.start();
-    }
-
-    private void initUi() {
-        Button btn = findViewById(R.id.test_btn);
-        if (btn != null) {
-            btn.setOnClickListener(this);
-        }
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.test_btn:
-            Log.d(TAG, "Handler:: Background Thread ID ${" + Thread.currentThread().getId() + "}");
-
-                App.testMessageBgHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "Handler:: Background Thread ID ${" + Thread.currentThread().getId() + "}");
-                    }
-                });
-
-                setTestMessage();
-                break;
-
-            default: break;
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.top_menu, menu);
+        return true;
     }
 
-    // sends test message to a handler that has looper
-    private void setTestMessage() {
-        Bundle extras = new Bundle();
-        extras.putInt("value1", 100);
-        extras.putString("value2", "test");
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
 
-        Message message = Message.obtain(App.testMessageBgHandler);
-        message.setData(extras);
-
-        App.testMessageBgHandler.sendMessage(message);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
